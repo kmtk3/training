@@ -2,14 +2,16 @@
 
 $fp = fopen('data.csv', 'a+b');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    fputcsv($fp, [$_POST['name'], $_POST['text']]);
-    rewind($fp);
+    if (isset($_POST['name']) and isset($_POST['text'])) {
+        fputcsv($fp, [$_POST['name'], $_POST['text']]);
+        rewind($fp);
+    } else {
+    }
 }
-while ($row = fgetcsv($fp)) {
-    $rows[] = $row;
+while ($post = fgetcsv($fp)) {
+    $posts[] = $post;
 }
 fclose($fp);
-
 ?>
 <!DOCTYPE html>
 <meta charset="UTF-8">
@@ -25,10 +27,10 @@ fclose($fp);
 </section>
 <section>
     <h2>投稿一覧</h2>
-    <?php if (!empty($rows)): ?>
+    <?php if (!empty($posts)): ?>
     <ul>
-        <?php foreach ($rows as $row): ?>
-        <li><?=$row[1]?> (<?=$row[0]?>)</li>
+        <?php foreach ($posts as [$author,$content]): ?>
+        <li><?=htmlspecialchars($content);?> (<?=htmlspecialchars($author);?>)</li>
         <?php endforeach; ?>
     </ul>
     <?php else: ?>
